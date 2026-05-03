@@ -49,8 +49,11 @@ class DashboardFragment : Fragment() {
 
         binding.buttonImportSms.setOnClickListener {
             lifecycleScope.launch {
-                SmsImporter.importExistingSms(requireContext(), repository)
+                val count = SmsImporter.importExistingSms(requireContext(), repository)
                 viewModel.refreshData()
+                if (count > 0) {
+                    binding.buttonImportSms.visibility = View.GONE
+                }
             }
         }
 

@@ -52,4 +52,12 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
     suspend fun getTransactionCount(): Int {
         return transactionDao.getTransactionCount()
     }
+
+    suspend fun getTransactionByReferenceId(referenceId: String): Transaction? {
+        return transactionDao.getByReferenceId(referenceId)
+    }
+
+    suspend fun getTransactionBySmsContent(smsContent: String): Transaction? {
+        return transactionDao.getBySmsContent(smsContent)
+    }
 }

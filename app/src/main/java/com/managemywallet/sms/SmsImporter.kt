@@ -3,7 +3,6 @@ package com.managemywallet.sms
 import android.content.Context
 import android.provider.Telephony
 import android.util.Log
-import com.managemywallet.WalletApplication
 import com.managemywallet.data.entity.Transaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,8 +10,8 @@ import java.util.Date
 
 object SmsImporter {
 
-    suspend fun importExistingSms(context: Context, repository: com.managemywallet.data.repository.TransactionRepository) {
-        withContext(Dispatchers.IO) {
+    suspend fun importExistingSms(context: Context, repository: com.managemywallet.data.repository.TransactionRepository): Int {
+        return withContext(Dispatchers.IO) {
             try {
                 val contentResolver = context.contentResolver
                 val uri = Telephony.Sms.Inbox.CONTENT_URI
@@ -41,6 +40,18 @@ object SmsImporter {
                             emptyMap()
                         ) ?: continue
 
+                        // Check for duplicate by referenceId or smsContent
+                        val existing = if (!parsedTransaction.referenceId.isNullOrEmpty()) {
+                            repository.getTransactionByReferenceId(parsedTransaction.referenceId!!)
+                        } else {
+                            repository.getTransactionBySmsContent(parsedTransaction.rawSms)
+                        }
+
+                        if (existing != null) {
+                            Log.d("SmsImporter", "Skipping duplicate: ${parsedTransaction.referenceId ?: parsedTransaction.rawSms.take(50)}")
+                            continue
+                        }
+
                         val transaction = Transaction(
                             amount = parsedTransaction.amount,
                             currency = "INR",
@@ -59,14 +70,15 @@ object SmsImporter {
                     }
                 }
 
-                Log.d("SmsImporter", "Imported $count transactions")
+                Log.d("SmsImporter", "Imported $count new transactions")
                 withContext(Dispatchers.Main) {
                     android.widget.Toast.makeText(
                         context,
-                        "Imported $count transactions",
+                        "Imported $count new transactions",
                         android.widget.Toast.LENGTH_LONG
                     ).show()
                 }
+                count
             } catch (e: Exception) {
                 Log.e("SmsImporter", "Error importing SMS", e)
                 withContext(Dispatchers.Main) {
@@ -76,6 +88,7 @@ object SmsImporter {
                         android.widget.Toast.LENGTH_LONG
                     ).show()
                 }
+                0
             }
         }
     }

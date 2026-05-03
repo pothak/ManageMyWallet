@@ -104,6 +104,23 @@
     <string name="analytics_empty">No data to display yet</string>
     <string name="analytics_by_category">Spending by Category</string>
     <string name="analytics_daily">Daily Spending</string>
+    <string name="analytics_spending_insights">Spending Insights</string>
+    <string name="analytics_budget_remaining">Budget Remaining</string>
+    <string name="analytics_avg_daily_spend">Avg Daily Spend</string>
+    <string name="analytics_top_category">Top Category</string>
+    <string name="analytics_total_spent">Total Spent</string>
+
+    <!-- Filters -->
+    <string name="filter_all">All</string>
+    <string name="filter_debit">Debit</string>
+    <string name="filter_credit">Credit</string>
+
+    <!-- Goals -->
+    <string name="goals_title">Monthly Goals</string>
+    <string name="goals_set_budget">Set Monthly Budget</string>
+    <string name="goals_spending_limit">Spending Limit</string>
+    <string name="goals_on_track">On Track! 🎉</string>
+    <string name="goals_over_budget">Over Budget! ⚠️</string>
 
     <!-- Common -->
     <string name="common_delete">Delete</string>

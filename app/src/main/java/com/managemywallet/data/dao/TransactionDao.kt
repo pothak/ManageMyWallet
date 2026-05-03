@@ -60,4 +60,10 @@ interface TransactionDao {
 
     @Query("DELETE FROM transactions")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM transactions WHERE reference_id = :referenceId LIMIT 1")
+    suspend fun getByReferenceId(referenceId: String): Transaction?
+
+    @Query("SELECT * FROM transactions WHERE sms_content = :smsContent LIMIT 1")
+    suspend fun getBySmsContent(smsContent: String): Transaction?
 }

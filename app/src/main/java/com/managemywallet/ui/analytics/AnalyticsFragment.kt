@@ -54,12 +54,15 @@ class AnalyticsFragment : Fragment() {
                 binding.textEmpty.visibility = View.VISIBLE
                 binding.cardChart.visibility = View.GONE
                 binding.cardBar.visibility = View.GONE
+                binding.cardInsights.visibility = View.GONE
             } else {
                 binding.textEmpty.visibility = View.GONE
                 binding.cardChart.visibility = View.VISIBLE
                 binding.cardBar.visibility = View.VISIBLE
+                binding.cardInsights.visibility = View.VISIBLE
                 val categoryMap = viewModel.getCategorySpendingMap(data)
                 setupPieChart(categoryMap)
+                updateSpendingInsights(data)
             }
         }
 
@@ -80,9 +83,9 @@ class AnalyticsFragment : Fragment() {
                 requireContext().getColor(R.color.card_3),
                 requireContext().getColor(R.color.card_4),
                 requireContext().getColor(R.color.primary),
-                requireContext().getColor(R.color.income),
                 requireContext().getColor(R.color.warning),
-                requireContext().getColor(R.color.expense)
+                requireContext().getColor(R.color.expense),
+                requireContext().getColor(R.color.income)
             )
             valueTextSize = 12f
             valueTextColor = Color.WHITE
@@ -93,7 +96,7 @@ class AnalyticsFragment : Fragment() {
 
         binding.pieChart.apply {
             this.data = PieData(dataSet)
-            centerText = "Categories"
+            centerText = "Spending Categories"
             setCenterTextSize(14f)
             description.isEnabled = false
             legend.isEnabled = true
@@ -116,7 +119,7 @@ class AnalyticsFragment : Fragment() {
         val labels = dailyMap.keys.toList()
 
         val dataSet = BarDataSet(entries, "Daily Spending").apply {
-            color = requireContext().getColor(R.color.primary)
+            color = requireContext().getColor(R.color.expense)
             valueTextSize = 10f
             valueTextColor = requireContext().getColor(R.color.on_surface)
         }
@@ -134,12 +137,33 @@ class AnalyticsFragment : Fragment() {
             axisLeft.apply {
                 setDrawGridLines(false)
                 textSize = 10f
+                textColor = requireContext().getColor(R.color.expense)
             }
             axisRight.isEnabled = false
             legend.isEnabled = false
             animateY(600)
             invalidate()
         }
+    }
+
+    private fun updateSpendingInsights(transactions: List<com.managemywallet.data.entity.Transaction>) {
+        val debitTransactions = transactions.filter { it.type.name == "DEBIT" }
+        val totalSpent = debitTransactions.sumOf { it.amount }
+        val avgDaily = totalSpent / 7.0
+
+        // Find top category
+        val topCategory = transactions.groupBy { it.category }
+            .maxByOrNull { it.value.sumOf { t -> t.amount } }
+            ?.key ?: "N/A"
+
+        // Budget remaining (assuming 5000 budget for demo)
+        val monthlyBudget = 5000.0
+        val remaining = monthlyBudget - totalSpent
+
+        binding.textTotalSpent.text = "₹%.2f".format(totalSpent)
+        binding.textAvgDaily.text = "₹%.2f".format(avgDaily)
+        binding.textTopCategory.text = topCategory
+        binding.textBudgetRemaining.text = "₹%.2f".format(remaining.coerceAtLeast(0.0))
     }
 
     override fun onDestroyView() {
