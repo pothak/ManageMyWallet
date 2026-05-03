@@ -47,7 +47,7 @@ class AnalyticsFragment : Fragment() {
             (requireActivity().application as WalletApplication).database.transactionDao()
         )
 
-        viewModel = ViewModelProvider(this, AnalyticsViewModelFactory(repository)).get(AnalyticsViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), AnalyticsViewModelFactory(repository)).get(AnalyticsViewModel::class.java)
 
         viewModel.categorySpend.observe(viewLifecycleOwner) { data ->
             if (data.isNullOrEmpty()) {
@@ -58,8 +58,8 @@ class AnalyticsFragment : Fragment() {
                 binding.textEmpty.visibility = View.GONE
                 binding.cardChart.visibility = View.VISIBLE
                 binding.cardBar.visibility = View.VISIBLE
-                @Suppress("UNCHECKED_CAST")
-                setupPieChart(data as Map<String, Double>)
+                val categoryMap = viewModel.getCategorySpendingMap(data)
+                setupPieChart(categoryMap)
             }
         }
 

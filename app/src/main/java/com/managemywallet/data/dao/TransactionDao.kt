@@ -52,6 +52,9 @@ interface TransactionDao {
     @Query("SELECT DISTINCT category FROM transactions ORDER BY category")
     fun getAllCategories(): LiveData<List<String>>
 
+    @Query("SELECT * FROM transactions WHERE transaction_type = 'DEBIT'")
+    suspend fun getDebitTransactions(): List<Transaction>
+
     @Query("SELECT COUNT(*) FROM transactions")
     suspend fun getTransactionCount(): Int
 

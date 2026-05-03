@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.managemywallet.data.entity.Transaction
 import com.managemywallet.data.repository.TransactionRepository
 import java.text.SimpleDateFormat
 import java.util.*
@@ -14,13 +15,24 @@ import kotlinx.coroutines.launch
 
 class AnalyticsViewModel(private val repository: TransactionRepository) : ViewModel() {
 
-    val categorySpend = repository.getAllCategories()
+    private val _categorySpend = MutableLiveData<List<Transaction>>()
+    val categorySpend: LiveData<List<Transaction>> = _categorySpend
 
     private val _dailySpending = MutableLiveData<Map<String, Double>>()
     val dailySpending: LiveData<Map<String, Double>> = _dailySpending
 
     init {
+        loadCategoryData()
         loadDailyData()
+    }
+
+    private fun loadCategoryData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val transactions = repository.getDebitTransactions()
+            CoroutineScope(Dispatchers.Main).launch {
+                _categorySpend.value = transactions
+            }
+        }
     }
 
     fun loadDailyData() {
@@ -46,6 +58,11 @@ class AnalyticsViewModel(private val repository: TransactionRepository) : ViewMo
                 _dailySpending.value = dailyMap
             }
         }
+    }
+
+    fun getCategorySpendingMap(transactions: List<Transaction>): Map<String, Double> {
+        return transactions.groupBy { it.category }
+            .mapValues { entry -> entry.value.sumOf { it.amount } }
     }
 }
 
