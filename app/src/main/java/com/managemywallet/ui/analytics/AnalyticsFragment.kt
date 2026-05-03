@@ -7,17 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.managemywallet.WalletApplication
 import com.managemywallet.R
@@ -53,28 +47,28 @@ class AnalyticsFragment : Fragment() {
             if (data.isNullOrEmpty()) {
                 binding.textEmpty.visibility = View.VISIBLE
                 binding.cardChart.visibility = View.GONE
-                binding.cardBar.visibility = View.GONE
                 binding.cardInsights.visibility = View.GONE
             } else {
                 binding.textEmpty.visibility = View.GONE
                 binding.cardChart.visibility = View.VISIBLE
-                binding.cardBar.visibility = View.VISIBLE
                 binding.cardInsights.visibility = View.VISIBLE
                 val categoryMap = viewModel.getCategorySpendingMap(data)
                 setupPieChart(categoryMap)
                 updateSpendingInsights(data)
             }
         }
-
-        viewModel.dailySpending.observe(viewLifecycleOwner) { data ->
-            if (data.isNotEmpty()) {
-                setupBarChart(data)
-            }
-        }
     }
 
     private fun setupPieChart(categoryMap: Map<String, Double>) {
-        val entries = categoryMap.map { PieEntry(it.value.toFloat(), it.key) }
+        // Group small categories into "Other" - keep top 5
+        val sorted = categoryMap.entries.sortedByDescending { it.value }
+        val topCategories = sorted.take(5)
+        val otherTotal = sorted.drop(5).sumOf { it.value }
+
+        val entries = topCategories.map { PieEntry(it.value.toFloat(), it.key) }.toMutableList()
+        if (otherTotal > 0) {
+            entries.add(PieEntry(otherTotal.toFloat(), "Other"))
+        }
 
         val dataSet = PieDataSet(entries, "Spending by Category").apply {
             colors = listOf(
@@ -107,41 +101,6 @@ class AnalyticsFragment : Fragment() {
             holeRadius = 50f
             transparentCircleRadius = 55f
             animateY(800)
-            invalidate()
-        }
-    }
-
-    private fun setupBarChart(dailyMap: Map<String, Double>) {
-        val entries = dailyMap.entries.mapIndexed { index, entry ->
-            BarEntry(index.toFloat(), entry.value.toFloat())
-        }
-
-        val labels = dailyMap.keys.toList()
-
-        val dataSet = BarDataSet(entries, "Daily Spending").apply {
-            color = requireContext().getColor(R.color.expense)
-            valueTextSize = 10f
-            valueTextColor = requireContext().getColor(R.color.on_surface)
-        }
-
-        binding.barChart.apply {
-            this.data = BarData(dataSet).apply { barWidth = 0.6f }
-            description.isEnabled = false
-            xAxis.apply {
-                position = XAxis.XAxisPosition.BOTTOM
-                granularity = 1f
-                labelCount = labels.size.coerceAtMost(7)
-                valueFormatter = IndexAxisValueFormatter(labels)
-                textSize = 9f
-            }
-            axisLeft.apply {
-                setDrawGridLines(false)
-                textSize = 10f
-                textColor = requireContext().getColor(R.color.expense)
-            }
-            axisRight.isEnabled = false
-            legend.isEnabled = false
-            animateY(600)
             invalidate()
         }
     }

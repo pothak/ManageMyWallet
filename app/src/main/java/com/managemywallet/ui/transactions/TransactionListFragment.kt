@@ -18,7 +18,7 @@ class TransactionListFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: TransactionViewModel
     private lateinit var adapter: TransactionAdapter
-    private var currentFilter: String = "all"
+    private var currentFilter: String = "debit"
 
     override fun onCreateView(
         inflater: LayoutInflater,
