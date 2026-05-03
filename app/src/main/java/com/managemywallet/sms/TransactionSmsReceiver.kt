@@ -65,6 +65,18 @@ class TransactionSmsReceiver : BroadcastReceiver() {
                     referenceId = parsedTransaction.referenceId
                 )
 
+                // Check for duplicate before inserting
+                val existing = if (!transaction.referenceId.isNullOrEmpty()) {
+                    database.transactionDao().getByReferenceId(transaction.referenceId!!)
+                } else {
+                    database.transactionDao().getBySmsContent(transaction.smsContent ?: "")
+                }
+
+                if (existing != null) {
+                    Log.d("TransactionSmsReceiver", "Skipping duplicate transaction: ${transaction.referenceId ?: transaction.smsContent?.take(50)}")
+                    return@launch
+                }
+
                 val id = database.transactionDao().insert(transaction)
                 Log.d("TransactionSmsReceiver", "Transaction saved with id: $id, category: ${transaction.category}")
 

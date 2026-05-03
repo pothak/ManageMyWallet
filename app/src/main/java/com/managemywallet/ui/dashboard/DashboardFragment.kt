@@ -49,11 +49,8 @@ class DashboardFragment : Fragment() {
 
         binding.buttonImportSms.setOnClickListener {
             lifecycleScope.launch {
-                val count = SmsImporter.importExistingSms(requireContext(), repository)
+                SmsImporter.importExistingSms(requireContext(), repository)
                 viewModel.refreshData()
-                if (count > 0) {
-                    binding.buttonImportSms.visibility = View.GONE
-                }
             }
         }
 
@@ -61,27 +58,55 @@ class DashboardFragment : Fragment() {
     }
 
     private fun observeData() {
-        viewModel.monthlySpend.observe(viewLifecycleOwner) { spend ->
-            binding.textExpense.text = "₹%.2f".format(spend)
-            updateBalance()
+        val monthlyBudget = 18000.0
+
+        viewModel.monthlySpending.observe(viewLifecycleOwner) { spending ->
+            val percentage = if (monthlyBudget > 0) (spending / monthlyBudget * 100).toInt().coerceAtMost(100) else 0
+            binding.textSpentAmount.text = "₹%.2f / ₹%.0f".format(spending, monthlyBudget)
+            binding.progressBudget.progress = percentage
+            val remaining = monthlyBudget - spending
+            binding.textRemaining.text = requireContext().getString(com.managemywallet.R.string.dashboard_remaining, remaining.coerceAtLeast(0.0))
         }
 
-        viewModel.monthlyIncome.observe(viewLifecycleOwner) { income ->
-            binding.textIncome.text = "₹%.2f".format(income)
-            updateBalance()
+        viewModel.yesterdaySpending.observe(viewLifecycleOwner) { amount ->
+            binding.textYesterday.text = "₹%.2f".format(amount)
+        }
+
+        viewModel.dailyAverage.observe(viewLifecycleOwner) { avg ->
+            binding.textDailyAvg.text = "₹%.2f".format(avg)
+        }
+
+        viewModel.trendWeek.observe(viewLifecycleOwner) { trend ->
+            val symbol = if (trend >= 0) "↑" else "↓"
+            val color = if (trend >= 0) requireContext().getColor(com.managemywallet.R.color.expense) else requireContext().getColor(com.managemywallet.R.color.income)
+            binding.textTrendWeek.text = "%s %.0f%%".format(symbol, Math.abs(trend))
+            binding.textTrendWeek.setTextColor(color)
+        }
+
+        viewModel.trendMonth.observe(viewLifecycleOwner) { trend ->
+            val symbol = if (trend >= 0) "↑" else "↓"
+            val color = if (trend >= 0) requireContext().getColor(com.managemywallet.R.color.expense) else requireContext().getColor(com.managemywallet.R.color.income)
+            binding.textTrendMonth.text = "%s %.0f%%".format(symbol, Math.abs(trend))
+            binding.textTrendMonth.setTextColor(color)
+        }
+
+        viewModel.topCategories.observe(viewLifecycleOwner) { categories ->
+            binding.layoutCategories.removeAllViews()
+            categories.take(5).forEachIndexed { index, (category, amount) ->
+                val textView = android.widget.TextView(requireContext()).apply {
+                    text = "${index + 1}. $category  ₹%.2f".format(amount)
+                    textSize = 14f
+                    setTextColor(requireContext().getColor(com.managemywallet.R.color.on_surface))
+                    setPadding(0, 8, 0, 8)
+                }
+                binding.layoutCategories.addView(textView)
+            }
         }
 
         viewModel.recentTransactions.observe(viewLifecycleOwner) { transactions ->
-            transactionAdapter.submitList(transactions.take(5))
+            transactionAdapter.submitList(transactions)
             binding.textEmpty.visibility = if (transactions.isEmpty()) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun updateBalance() {
-        val income = viewModel.monthlyIncome.value ?: 0.0
-        val spend = viewModel.monthlySpend.value ?: 0.0
-        val balance = income - spend
-        binding.textBalanceAmount.text = "₹%.2f".format(balance)
     }
 
     override fun onDestroyView() {

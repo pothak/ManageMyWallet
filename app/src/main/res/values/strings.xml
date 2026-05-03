@@ -14,13 +14,15 @@
     <string name="nav_settings">Settings</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_monthly_spend">This Month</string>
-    <string name="dashboard_income">Income</string>
-    <string name="dashboard_expense">Expense</string>
-    <string name="dashboard_balance">Balance</string>
-    <string name="dashboard_recent">Recent Transactions</string>
-    <string name="dashboard_categories">By Category</string>
-    <string name="dashboard_view_all">View All</string>
+    <string name="dashboard_monthly_spending">Monthly Spending</string>
+    <string name="dashboard_remaining">₹%1$.2f remaining</string>
+    <string name="dashboard_yesterday">Yesterday</string>
+    <string name="dashboard_daily_avg">Daily Average</string>
+    <string name="dashboard_trends">Spending Trends</string>
+    <string name="dashboard_vs_last_week">vs Last Week</string>
+    <string name="dashboard_vs_last_month">vs Last Month</string>
+    <string name="dashboard_top_categories">Top Categories</string>
+    <string name="dashboard_recent_expenses">Recent Expenses</string>
 
     <!-- Transactions -->
     <string name="transactions_title">Transactions</string>

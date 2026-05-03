@@ -47,7 +47,9 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
 
     fun getAllCategories() = transactionDao.getAllCategories()
 
-    suspend fun getDebitTransactions() = transactionDao.getDebitTransactions()
+    suspend fun getDebitTransactions(): List<Transaction> {
+        return transactionDao.getDebitTransactions()
+    }
 
     suspend fun getTransactionCount(): Int {
         return transactionDao.getTransactionCount()
