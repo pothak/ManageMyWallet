@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_md">
+
+        <TextView
+            android:id="@+id/text_title"
+            style="@style/TextAppearance.App.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/transactions_detail"
+            android:layout_marginTop="@dimen/spacing_md"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            app:cardCornerRadius="@dimen/card_radius"
+            app:cardElevation="@dimen/card_elevation"
+            app:layout_constraintTop_toBottomOf="@id/text_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_lg"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/text_amount"
+                    style="@style/TextAppearance.App.Amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_placeholder_amount" />
+
+                <TextView
+                    android:id="@+id/text_merchant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_placeholder_merchant"
+                    android:textColor="@color/on_surface_medium"
+                    android:textSize="@dimen/text_body"
+                    android:layout_marginTop="@dimen/spacing_sm" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_details"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            app:cardCornerRadius="@dimen/card_radius"
+            app:cardElevation="@dimen/card_elevation"
+            app:layout_constraintTop_toBottomOf="@id/card_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <TextView
+                    android:id="@+id/text_category_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_category"
+                    android:textColor="@color/on_surface_light"
+                    android:textSize="@dimen/text_caption" />
+
+                <TextView
+                    android:id="@+id/text_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_category"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_body"
+                    android:layout_marginTop="@dimen/spacing_xs" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"
+                    android:layout_marginVertical="@dimen/spacing_sm" />
+
+                <TextView
+                    android:id="@+id/text_date_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_date"
+                    android:textColor="@color/on_surface_light"
+                    android:textSize="@dimen/text_caption" />
+
+                <TextView
+                    android:id="@+id/text_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_date"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_body"
+                    android:layout_marginTop="@dimen/spacing_xs" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"
+                    android:layout_marginVertical="@dimen/spacing_sm" />
+
+                <TextView
+                    android:id="@+id/text_bank_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_bank"
+                    android:textColor="@color/on_surface_light"
+                    android:textSize="@dimen/text_caption" />
+
+                <TextView
+                    android:id="@+id/text_bank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_dash"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_body"
+                    android:layout_marginTop="@dimen/spacing_xs" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"
+                    android:layout_marginVertical="@dimen/spacing_sm" />
+
+                <TextView
+                    android:id="@+id/text_ref_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_reference_id"
+                    android:textColor="@color/on_surface_light"
+                    android:textSize="@dimen/text_caption" />
+
+                <TextView
+                    android:id="@+id/text_ref"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/common_dash"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_body"
+                    android:layout_marginTop="@dimen/spacing_xs" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/common_delete"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_xl"
+            app:layout_constraintTop_toBottomOf="@id/card_details"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="@color/expense" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

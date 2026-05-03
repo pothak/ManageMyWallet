@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2563EB</color>
+    <color name="primary_dark">#1D4ED8</color>
+    <color name="primary_light">#60A5FA</color>
+    <color name="primary_surface">#EFF6FF</color>
+
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F1F5F9</color>
+
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_surface">#0F172A</color>
+    <color name="on_surface_medium">#475569</color>
+    <color name="on_surface_light">#94A3B8</color>
+
+    <color name="income">#10B981</color>
+    <color name="income_light">#D1FAE5</color>
+    <color name="expense">#EF4444</color>
+    <color name="expense_light">#FEE2E2</color>
+
+    <color name="warning">#F59E0B</color>
+    <color name="warning_light">#FEF3C7</color>
+
+    <color name="divider">#E2E8F0</color>
+    <color name="shadow">#0F172A</color>
+
+    <color name="card_1">#3B82F6</color>
+    <color name="card_2">#8B5CF6</color>
+    <color name="card_3">#EC4899</color>
+    <color name="card_4">#14B8A6</color>
+</resources>
