@@ -6,7 +6,6 @@ import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
 import com.managemywallet.WalletApplication
-import com.managemywallet.data.entity.MerchantCategoryMapping
 import com.managemywallet.data.entity.Transaction
 import com.managemywallet.alert.NotificationHelper
 import com.managemywallet.alert.SpendingAlertChecker
@@ -29,14 +28,20 @@ class TransactionSmsReceiver : BroadcastReceiver() {
         Log.d("TransactionSmsReceiver", "Received SMS: $smsBody")
 
         if (!SmsParser.isTransactionSms(smsBody)) {
-            Log.d("TransactionSmsReceiver", "Not a transaction SMS, ignoring")
+            Log.d("TransactionSmsReceiver", "Ignored SMS [not_transaction]: ${smsBody.take(100)}")
             return
         }
 
         scope.launch {
             try {
-                val application = context.applicationContext as WalletApplication
-                val mappingDao = application.database.merchantCategoryMappingDao()
+                val application = context.applicationContext as? WalletApplication
+                if (application == null) {
+                    Log.e("TransactionSmsReceiver", "Failed to get WalletApplication from context")
+                    return@launch
+                }
+
+                val database = application.database
+                val mappingDao = database.merchantCategoryMappingDao()
 
                 val userMappingsList = mappingDao.getAllMappings().value ?: emptyList()
                 val userMappings = userMappingsList.associate { it.merchantPattern to it.category }
@@ -60,11 +65,14 @@ class TransactionSmsReceiver : BroadcastReceiver() {
                     referenceId = parsedTransaction.referenceId
                 )
 
-                val id = application.database.transactionDao().insert(transaction)
+                val id = database.transactionDao().insert(transaction)
                 Log.d("TransactionSmsReceiver", "Transaction saved with id: $id, category: ${transaction.category}")
 
                 if (parsedTransaction.isCategoryLearned && userMappingsList.isNotEmpty()) {
-                    val pattern = userMappingsList.find { it.category == parsedTransaction.category && parsedTransaction.merchant.lowercase().contains(it.merchantPattern.lowercase()) }
+                    val pattern = userMappingsList.find {
+                        it.category == parsedTransaction.category &&
+                        parsedTransaction.merchant.lowercase().contains(it.merchantPattern.lowercase())
+                    }
                     pattern?.let {
                         mappingDao.incrementMatchCount(it.id)
                     }
@@ -88,8 +96,8 @@ class TransactionSmsReceiver : BroadcastReceiver() {
 
                 val alertChecker = SpendingAlertChecker(
                     context,
-                    application.database.transactionDao(),
-                    application.database.alertRuleDao()
+                    database.transactionDao(),
+                    database.alertRuleDao()
                 )
                 alertChecker.checkAlerts(transaction)
 

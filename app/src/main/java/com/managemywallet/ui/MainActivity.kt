@@ -1,9 +1,12 @@
 package com.managemywallet.ui
 
+import android.Manifest
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.managemywallet.R
@@ -18,6 +21,8 @@ import com.managemywallet.ui.settings.SettingsFragment
 import com.managemywallet.ui.transactions.TransactionListFragment
 
 class MainActivity : AppCompatActivity() {
+
+    private val SMS_PERMISSION_REQUEST_CODE = 100
 
     private var isUnlocked = false
     private var isAuthenticating = false
@@ -48,6 +53,42 @@ class MainActivity : AppCompatActivity() {
             isUnlocked = true
             InactivityTimer.unlock()
             setupNavigation()
+            requestSmsPermissions()
+        }
+    }
+
+    private fun requestSmsPermissions() {
+        val receiveSms = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+        val readSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)
+        val notifications = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+
+        val permissionsToRequest = mutableListOf<String>()
+        if (receiveSms != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.RECEIVE_SMS)
+        }
+        if (readSms != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.READ_SMS)
+        }
+        if (notifications != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                SMS_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SMS_PERMISSION_REQUEST_CODE) {
+            val allGranted = grantResults.all { it == android.content.pm.PackageManager.PERMISSION_GRANTED }
+            if (!allGranted) {
+                android.widget.Toast.makeText(this, "SMS permissions are required to read transaction messages", android.widget.Toast.LENGTH_LONG).show()
+            }
         }
     }
 

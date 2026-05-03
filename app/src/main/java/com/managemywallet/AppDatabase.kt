@@ -14,8 +14,6 @@ import com.managemywallet.data.dao.MerchantCategoryMappingDao
 import com.managemywallet.data.entity.Transaction
 import com.managemywallet.data.entity.AlertRule
 import com.managemywallet.data.entity.MerchantCategoryMapping
-import com.managemywallet.security.AndroidKeystoreManager
-import net.sqlcipher.database.SupportFactory
 
 @Database(
     entities = [Transaction::class, AlertRule::class, MerchantCategoryMapping::class],
@@ -63,16 +61,11 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                val passphrase = AndroidKeystoreManager.getDatabasePassphrase()
-                val passphraseBytes = net.sqlcipher.database.SQLiteDatabase.getBytes(passphrase.toCharArray())
-                val factory = SupportFactory(passphraseBytes)
-
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "wallet.db"
                 )
-                    .openHelperFactory(factory)
                     .addMigrations(MIGRATION_1_2)
                     .addCallback(CALLBACK)
                     .build()

@@ -1,0 +1,4 @@
+name: DeepSeek Coder V2
+provider: ollama
+model: deepseek-coder-v2:16b-lite-instruct-q2_K
+apiBase: http://localhost:11434

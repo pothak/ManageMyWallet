@@ -83,4 +83,8 @@ class DashboardViewModel(private val repository: TransactionRepository) : ViewMo
             categorySpend.value = categoryMap
         }
     }
+
+    fun refreshData() {
+        loadDashboardData()
+    }
 }

@@ -37,7 +37,7 @@ class TransactionDetailFragment : Fragment() {
             (requireActivity().application as WalletApplication).database.transactionDao()
         )
 
-        viewModel = ViewModelProvider(this, TransactionViewModelFactory(repository)).get(TransactionViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), TransactionViewModelFactory(repository)).get(TransactionViewModel::class.java)
 
         val transactionId = arguments?.getLong(ARG_ID) ?: 0L
         viewModel.getTransactionById(transactionId)

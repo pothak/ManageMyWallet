@@ -16,7 +16,7 @@ data class MerchantCategoryMapping(
     val category: String,
 
     @ColumnInfo(name = "is_user_defined")
-    val isUserDefined: Boolean = true,
+    val isUserDefined: Boolean = false,
 
     @ColumnInfo(name = "match_count")
     val matchCount: Int = 1,

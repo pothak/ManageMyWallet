@@ -1,16 +1,20 @@
 package com.managemywallet.ui.dashboard
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.managemywallet.WalletApplication
 import com.managemywallet.data.repository.TransactionRepository
 import com.managemywallet.databinding.FragmentDashboardBinding
 import com.managemywallet.ui.transactions.TransactionAdapter
+import com.managemywallet.sms.SmsImporter
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
@@ -35,12 +39,19 @@ class DashboardFragment : Fragment() {
             (requireActivity().application as WalletApplication).database.transactionDao()
         )
 
-        viewModel = ViewModelProvider(this, DashboardViewModelFactory(repository)).get(DashboardViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), DashboardViewModelFactory(repository)).get(DashboardViewModel::class.java)
 
         transactionAdapter = TransactionAdapter()
         binding.recyclerRecent.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = transactionAdapter
+        }
+
+        binding.buttonImportSms.setOnClickListener {
+            lifecycleScope.launch {
+                SmsImporter.importExistingSms(requireContext(), repository)
+                viewModel.refreshData()
+            }
         }
 
         observeData()

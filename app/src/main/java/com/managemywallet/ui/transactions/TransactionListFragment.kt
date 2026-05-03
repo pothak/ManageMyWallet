@@ -34,7 +34,7 @@ class TransactionListFragment : Fragment() {
             (requireActivity().application as WalletApplication).database.transactionDao()
         )
 
-        viewModel = ViewModelProvider(this, TransactionViewModelFactory(repository)).get(TransactionViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), TransactionViewModelFactory(repository)).get(TransactionViewModel::class.java)
 
         adapter = TransactionAdapter()
         binding.recyclerTransactions.apply {

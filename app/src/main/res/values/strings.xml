@@ -29,6 +29,9 @@
     <string name="transactions_detail">Transaction Details</string>
     <string name="transactions_empty">No transactions yet</string>
     <string name="transactions_empty_hint">Transaction SMS will appear here automatically</string>
+    <string name="dashboard_import_sms">Import Existing SMS</string>
+    <string name="dashboard_importing">Importing SMS messages...</string>
+    <string name="dashboard_import_done">Imported %1$d transactions</string>
 
     <!-- Alerts -->
     <string name="alerts_title">Alert Rules</string>

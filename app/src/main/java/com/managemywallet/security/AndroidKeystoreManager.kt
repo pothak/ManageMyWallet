@@ -82,8 +82,22 @@ object AndroidKeystoreManager {
         return keyGenerator.generateKey()
     }
 
-    fun getDatabasePassphrase(): String {
-        val key = getOrCreateDatabaseEncryptionKey()
-        return key.encoded.joinToString("") { byte -> "%02x".format(byte) }
+    fun getDatabasePassphrase(context: android.content.Context): String {
+        val prefs = androidx.security.crypto.EncryptedSharedPreferences.create(
+            context,
+            "db_passphrase_prefs",
+            androidx.security.crypto.MasterKey.Builder(context)
+                .setKeyScheme(androidx.security.crypto.MasterKey.KeyScheme.AES256_GCM)
+                .build(),
+            androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        var passphrase = prefs.getString("db_passphrase", null)
+        if (passphrase == null) {
+            val bytes = ByteArray(32).also { java.security.SecureRandom().nextBytes(it) }
+            passphrase = bytes.joinToString("") { "%02x".format(it) }
+            prefs.edit().putString("db_passphrase", passphrase).apply()
+        }
+        return passphrase
     }
 }
